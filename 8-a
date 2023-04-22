@@ -1,0 +1,109 @@
+import time
+import random
+
+#線性搜尋
+def linear_search(S, x):
+    for i in range(len(S)):
+        if S[i] == x:
+            return True
+    return False
+#二元搜尋
+def binary_search(S, x):
+    low = 0
+    high = len(S) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if S[mid] == x:
+            return True
+        elif S[mid] < x:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return False
+#費氏搜尋
+def fibonacci_search(S, x):
+    n = len(S)
+    fib2 = 0  # Fibonacci number 2
+    fib1 = 1  # Fibonacci number 1
+    fib = fib1 + fib2  # Current Fibonacci number
+    while fib < n:
+        fib2 = fib1
+        fib1 = fib
+        fib = fib1 + fib2
+    offset = -1  # Starting index for comparison
+    while fib > 1:
+        i = min(offset + fib2, n - 1)
+        if S[i] < x:
+            fib = fib1
+            fib1 = fib2
+            fib2 = fib - fib1
+            offset = i
+        elif S[i] > x:
+            fib = fib2
+            fib1 = fib1 - fib2
+            fib2 = fib - fib1
+        else:
+            return True
+    if fib1 and offset+1 < n and S[offset+1] == x:
+        return True
+    return False
+#產生隨機n長度串列
+def generate_random_list(N,l,h):
+    S = []
+    for i in range(N):
+        S.append(random.randint(l,h))
+    S.sort()
+    return S
+
+linear_search_times = []
+binary_search_times = []
+fibonacci_search_times = []
+
+for j in range(100,10001,10):#n從10執行到1000
+  l = 0#***
+  h = j#***
+  S = generate_random_list(j,l,h)#產生串列***
+  x = random.randint(l,h)#產生隨機目標@***
+
+  #計算linear search平均時間
+  start = time.perf_counter()
+  for i in range(5):
+    linear_search(S,x)
+  end = time.perf_counter()
+  linear_search_t = (end - start)/5
+  linear_search_times.append(linear_search_t)
+
+  #計算binary search平均時間
+  start = time.perf_counter()
+  for i in range(5):
+    binary_search(S,x)
+  end = time.perf_counter()
+  binary_search_t = (end - start)/5
+  binary_search_times.append(binary_search_t)
+
+  #計算fibonacci search平均時間
+  start = time.perf_counter()
+  for i in range(5):
+    fibonacci_search(S,x)
+  end = time.perf_counter()
+  fibonacci_search_t = (end - start)/5
+  fibonacci_search_times.append(fibonacci_search_t)
+
+  #將時間資料排序
+  l = [[linear_search_t,'linear_search_t'],[binary_search_t,"binary_search_t"],[fibonacci_search_t,'fibonacci_search_t']]
+  l.sort()
+
+  #輸出
+  print("n =",j)
+  # print("結果:",binary_search(S,x))
+  # print(x)
+  # print(S)
+  # print("linear search:",linear_search_t)
+  # print("binary search:",binary_search_t)
+  # print("fibonacci search:",fibonacci_search_t)
+  for i in l:
+    if l.index(i) == 2:
+      print(i[1])
+    else:
+      print(i[1],end=" -->")
+  print("=================================================")
